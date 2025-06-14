@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [ApiController]
+    [Route("[controller]")]
     public class UrlShortenerController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -16,13 +17,13 @@ namespace API.Controllers
             _db = db;
         }
 
-        [HttpPost("ShortUrl")]
-        public IActionResult Get(UrlMapperDTO dto)
+        [HttpPost]
+        public IActionResult Get(string Url)
         {
             try
             {
 
-                if (!Uri.TryCreate(dto.ActualUrl, UriKind.Absolute, out var actualUrl))
+                if (!Uri.TryCreate(Url, UriKind.Absolute, out var actualUrl))
                 {
                     return BadRequest("Invalid Url");
                 }
@@ -54,7 +55,7 @@ namespace API.Controllers
 
                 UrlMapper url = new()
                 {
-                    ActualUrl = sanitizer.Sanitize(dto.ActualUrl),
+                    ActualUrl = sanitizer.Sanitize(Url),
                     ShortenedUrl = randomStr
                 };
 
